@@ -3,6 +3,12 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 bat 'docker --version'
@@ -10,10 +16,9 @@ pipeline {
             }
         }
 
-        stage('Deploy Application') {
+        stage('Deploy with Ansible') {
             steps {
-                bat 'docker rm -f student-management-app 2>NUL || ver >NUL'
-                bat 'docker run -d --name student-management-app -p 5000:5000 student-management:1.0'
+                bat 'wsl -d Ubuntu -- ansible-playbook /home/kasbi/student-cicd/deploy.yml'
             }
         }
 
